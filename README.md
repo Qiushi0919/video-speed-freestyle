@@ -94,6 +94,7 @@ video-3x-speed/
 |-- store-assets/
 |-- scripts/
 |-- PRIVACY.md
+|-- LICENSE
 |-- README.zh-CN.md
 `-- STORE_LISTING.md
 ```
@@ -106,6 +107,10 @@ Video 3x Speed does not collect, transmit, sell, or share user data. It only sto
 - the selected playback speed
 
 See [PRIVACY.md](PRIVACY.md) for the full privacy statement.
+
+## License
+
+This project is open source under the [MIT License](LICENSE).
 
 ## Status
 

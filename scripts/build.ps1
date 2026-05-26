@@ -17,6 +17,7 @@ $include = @(
   "popup.html",
   "popup.css",
   "popup.js",
+  "LICENSE",
   "images"
 )
 
