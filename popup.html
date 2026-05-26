@@ -33,6 +33,14 @@
           <button type="button" data-speed="4">4x</button>
         </div>
       </section>
+
+      <section class="control secondary">
+        <div class="row">
+          <label for="holdSpeedRange">Hold &rarr;</label>
+          <output id="holdSpeedValue" for="holdSpeedRange">3x</output>
+        </div>
+        <input id="holdSpeedRange" type="range" min="0.25" max="5" step="0.25" value="3">
+      </section>
     </main>
     <script src="popup.js"></script>
   </body>

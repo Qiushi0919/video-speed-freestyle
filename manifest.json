@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "Video 3x Speed",
   "short_name": "3x Speed",
-  "version": "1.0.1",
-  "description": "Set HTML5 videos to 3x speed with a simple toolbar control.",
+  "version": "1.1.0",
+  "description": "Set HTML5 videos to high speed with a toolbar control and hold-to-speed shortcut.",
   "icons": {
     "16": "images/icon-16.png",
     "32": "images/icon-32.png",

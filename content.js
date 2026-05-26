@@ -1,21 +1,34 @@
 const DEFAULT_SETTINGS = {
   enabled: true,
-  speed: 3
+  speed: 3,
+  holdSpeed: 3
 };
+
+const HOLD_KEY = "ArrowRight";
+const HOLD_ACTIVATION_DELAY_MS = 280;
 
 const watchedVideos = new WeakSet();
 let currentSettings = { ...DEFAULT_SETTINGS };
 let isApplyingRate = false;
 let enforceTimer = null;
+let holdState = {
+  keyDown: false,
+  active: false,
+  timer: null
+};
 
-function normalizeSpeed(value) {
+function normalizeSpeed(value, fallback = DEFAULT_SETTINGS.speed) {
   const speed = Number(value);
-  if (!Number.isFinite(speed)) return DEFAULT_SETTINGS.speed;
+  if (!Number.isFinite(speed)) return fallback;
   return Math.min(5, Math.max(0.25, Math.round(speed * 4) / 4));
 }
 
 function getTargetRate() {
-  return normalizeSpeed(currentSettings.speed);
+  if (holdState.active) {
+    return normalizeSpeed(currentSettings.holdSpeed, DEFAULT_SETTINGS.holdSpeed);
+  }
+
+  return normalizeSpeed(currentSettings.speed, DEFAULT_SETTINGS.speed);
 }
 
 function setVideoSpeed(video) {
@@ -96,11 +109,111 @@ function stopEnforcing() {
   enforceTimer = null;
 }
 
-function applySettings(settings) {
+function clearHoldTimer() {
+  if (!holdState.timer) return;
+  window.clearTimeout(holdState.timer);
+  holdState.timer = null;
+}
+
+function activateHoldSpeed() {
+  holdState.timer = null;
+
+  if (!holdState.keyDown || holdState.active || !currentSettings.enabled) return;
+
+  holdState.active = true;
+  enforceAllVideos();
+}
+
+function resetHoldSpeed() {
+  const wasActive = holdState.active;
+
+  holdState.keyDown = false;
+  holdState.active = false;
+  clearHoldTimer();
+
+  if (wasActive) {
+    enforceAllVideos();
+  }
+}
+
+function isEditableTarget(target) {
+  if (!(target instanceof Element)) return false;
+
+  const editable = target.closest("input, textarea, select, [contenteditable], [role='textbox']");
+  if (!editable) return false;
+
+  return editable.getAttribute("contenteditable") !== "false";
+}
+
+function shouldHandleHoldShortcut(event) {
+  if (event.key !== HOLD_KEY) return false;
+  if (event.ctrlKey || event.altKey || event.metaKey) return false;
+  if (event.isComposing) return false;
+  return !isEditableTarget(event.target);
+}
+
+function handleHoldKeyDown(event) {
+  if (!shouldHandleHoldShortcut(event) || !currentSettings.enabled) return;
+
+  if (holdState.active) {
+    event.preventDefault();
+    event.stopPropagation();
+    return;
+  }
+
+  if (holdState.keyDown) {
+    if (event.repeat) {
+      clearHoldTimer();
+      activateHoldSpeed();
+
+      if (holdState.active) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }
+
+    return;
+  }
+
+  holdState.keyDown = true;
+  clearHoldTimer();
+  holdState.timer = window.setTimeout(activateHoldSpeed, HOLD_ACTIVATION_DELAY_MS);
+}
+
+function handleHoldKeyUp(event) {
+  if (event.key !== HOLD_KEY) return;
+
+  if (holdState.active) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  resetHoldSpeed();
+}
+
+function installHoldShortcut() {
+  window.addEventListener("keydown", handleHoldKeyDown, true);
+  window.addEventListener("keyup", handleHoldKeyUp, true);
+  window.addEventListener("blur", resetHoldSpeed);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      resetHoldSpeed();
+    }
+  });
+}
+
+function applySettings(settings = {}) {
+  const enabled = settings.enabled === undefined ? currentSettings.enabled : settings.enabled !== false;
+
   currentSettings = {
-    enabled: settings.enabled !== false,
-    speed: normalizeSpeed(settings.speed)
+    enabled,
+    speed: normalizeSpeed(settings.speed ?? currentSettings.speed, DEFAULT_SETTINGS.speed),
+    holdSpeed: normalizeSpeed(settings.holdSpeed ?? currentSettings.holdSpeed, DEFAULT_SETTINGS.holdSpeed)
   };
+
+  if (!currentSettings.enabled) {
+    resetHoldSpeed();
+  }
 
   if (currentSettings.enabled) {
     startEnforcing();
@@ -118,8 +231,9 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   if (areaName !== "sync") return;
 
   applySettings({
-    enabled: changes.enabled?.newValue ?? currentSettings.enabled,
-    speed: changes.speed?.newValue ?? currentSettings.speed
+    enabled: changes.enabled?.newValue,
+    speed: changes.speed?.newValue,
+    holdSpeed: changes.holdSpeed?.newValue
   });
 });
 
@@ -128,10 +242,12 @@ chrome.runtime.onMessage.addListener((message) => {
 
   applySettings({
     enabled: message.enabled,
-    speed: message.speed
+    speed: message.speed,
+    holdSpeed: message.holdSpeed
   });
 });
 
+installHoldShortcut();
 scanVideos();
 startEnforcing();
 

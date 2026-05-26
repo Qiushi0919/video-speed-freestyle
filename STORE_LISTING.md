@@ -6,11 +6,11 @@ Video 3x Speed
 
 ## Summary
 
-Set HTML5 videos to 3x speed with a simple toolbar control.
+Set HTML5 videos to high speed with a toolbar control and hold-to-speed shortcut.
 
 ## Description
 
-Video 3x Speed keeps HTML5 videos playing at your chosen speed. It defaults to 3x and includes a small toolbar popup for pausing the extension or choosing another playback rate.
+Video 3x Speed keeps HTML5 videos playing at your chosen speed. It defaults to 3x and includes a small toolbar popup for pausing the extension, choosing another playback rate, or setting the temporary speed used while holding the Right Arrow key.
 
 The extension works locally in your browser. It does not collect analytics, browsing history, page content, video content, or personal data.
 
@@ -20,7 +20,7 @@ Change HTML5 video playback speed on web pages.
 
 ## Permission justification
 
-Storage permission is used only to remember whether the extension is enabled and which speed the user selected.
+Storage permission is used only to remember whether the extension is enabled, which regular speed the user selected, and which temporary hold speed the user selected.
 
 Active tab permission is used only when the toolbar popup is open, so the selected speed can be applied immediately to the current tab.
 
