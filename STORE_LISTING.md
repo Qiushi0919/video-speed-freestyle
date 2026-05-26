@@ -22,6 +22,8 @@ Change HTML5 video playback speed on web pages.
 
 Storage permission is used only to remember whether the extension is enabled and which speed the user selected.
 
+Active tab permission is used only when the toolbar popup is open, so the selected speed can be applied immediately to the current tab.
+
 The content script runs on web pages so it can find HTML5 video elements and set their playback speed.
 
 ## Privacy practices

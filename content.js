@@ -6,6 +6,7 @@ const DEFAULT_SETTINGS = {
 const watchedVideos = new WeakSet();
 let currentSettings = { ...DEFAULT_SETTINGS };
 let isApplyingRate = false;
+let enforceTimer = null;
 
 function normalizeSpeed(value) {
   const speed = Number(value);
@@ -76,12 +77,39 @@ function scanVideos(root = document) {
   root.querySelectorAll?.("video").forEach(watchVideo);
 }
 
+function enforceAllVideos() {
+  if (!currentSettings.enabled) return;
+  document.querySelectorAll("video").forEach((video) => {
+    watchVideo(video);
+    syncVideoSpeed(video);
+  });
+}
+
+function startEnforcing() {
+  if (enforceTimer) return;
+  enforceTimer = window.setInterval(enforceAllVideos, 500);
+}
+
+function stopEnforcing() {
+  if (!enforceTimer) return;
+  window.clearInterval(enforceTimer);
+  enforceTimer = null;
+}
+
 function applySettings(settings) {
   currentSettings = {
     enabled: settings.enabled !== false,
     speed: normalizeSpeed(settings.speed)
   };
+
+  if (currentSettings.enabled) {
+    startEnforcing();
+  } else {
+    stopEnforcing();
+  }
+
   scanVideos();
+  enforceAllVideos();
 }
 
 chrome.storage.sync.get(DEFAULT_SETTINGS, applySettings);
@@ -95,7 +123,17 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   });
 });
 
+chrome.runtime.onMessage.addListener((message) => {
+  if (message?.type !== "VIDEO_3X_APPLY_SETTINGS") return;
+
+  applySettings({
+    enabled: message.enabled,
+    speed: message.speed
+  });
+});
+
 scanVideos();
+startEnforcing();
 
 const observer = new MutationObserver((mutations) => {
   for (const mutation of mutations) {

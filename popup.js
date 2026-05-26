@@ -34,9 +34,26 @@ function render(settings) {
 }
 
 function saveSettings(settings) {
-  chrome.storage.sync.set({
+  const nextSettings = {
     enabled: settings.enabled,
     speed: normalizeSpeed(settings.speed)
+  };
+
+  chrome.storage.sync.set(nextSettings);
+  applyToActiveTab(nextSettings);
+}
+
+function applyToActiveTab(settings) {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const tabId = tabs[0]?.id;
+    if (!tabId) return;
+
+    chrome.tabs.sendMessage(tabId, {
+      type: "VIDEO_3X_APPLY_SETTINGS",
+      ...settings
+    }).catch(() => {
+      // The tab may be a browser page or may need a refresh before the content script loads.
+    });
   });
 }
 
