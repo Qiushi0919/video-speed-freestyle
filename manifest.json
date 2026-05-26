@@ -1,8 +1,26 @@
 {
   "manifest_version": 3,
   "name": "Video 3x Speed",
+  "short_name": "3x Speed",
   "version": "1.0.0",
-  "description": "Automatically plays HTML5 videos at 3x speed.",
+  "description": "Set HTML5 videos to 3x speed with a simple toolbar control.",
+  "icons": {
+    "16": "images/icon-16.png",
+    "32": "images/icon-32.png",
+    "48": "images/icon-48.png",
+    "128": "images/icon-128.png"
+  },
+  "action": {
+    "default_title": "Video 3x Speed",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/icon-16.png",
+      "32": "images/icon-32.png",
+      "48": "images/icon-48.png",
+      "128": "images/icon-128.png"
+    }
+  },
+  "permissions": ["storage"],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],

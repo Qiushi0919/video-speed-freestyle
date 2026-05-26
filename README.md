@@ -1,19 +1,31 @@
 # Video 3x Speed
 
-这是一个 Chrome / Edge 可加载的本地浏览器扩展，会把网页里的 HTML5 视频自动设为 3 倍速。
+A lightweight Chrome extension that automatically sets HTML5 videos to 3x playback speed.
 
-## 安装
+## Features
 
-1. 打开 Chrome 或 Edge。
-2. 进入扩展管理页：
-   - Chrome: `chrome://extensions/`
-   - Edge: `edge://extensions/`
-3. 打开右上角的「开发者模式」。
-4. 点击「加载已解压的扩展程序」。
-5. 选择这个文件夹：`video-3x-speed`
+- Sets detected HTML5 videos to 3x by default.
+- Keeps the selected speed when pages try to reset playback rate.
+- Includes a toolbar popup for pausing the extension or choosing another speed.
+- Stores only the user's local speed preference through Chrome storage.
 
-安装后刷新视频页面，视频会自动变成 3 倍速。
+## Local install
 
-## 说明
+1. Open `chrome://extensions/`.
+2. Enable Developer mode.
+3. Choose "Load unpacked".
+4. Select this folder.
 
-这个扩展只控制网页里的标准 HTML5 `<video>`。少数网站如果使用特殊播放器、防篡改逻辑或把视频放在受限 iframe 中，可能不会完全生效。
+## Chrome Web Store package
+
+Run the packaging script:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/build.ps1
+```
+
+The upload ZIP is created in `dist/`.
+
+## Privacy
+
+This extension does not collect, transmit, sell, or share user data. It only stores the user's enable state and speed value through Chrome's storage API.

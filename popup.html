@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Video 3x Speed</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="popup">
+      <header class="header">
+        <img src="images/icon-48.png" width="32" height="32" alt="">
+        <div>
+          <h1>Video 3x Speed</h1>
+          <p id="statusText">Enabled</p>
+        </div>
+        <label class="switch" title="Enable on this browser">
+          <input id="enabledToggle" type="checkbox" checked>
+          <span></span>
+        </label>
+      </header>
+
+      <section class="control">
+        <div class="row">
+          <label for="speedRange">Speed</label>
+          <output id="speedValue" for="speedRange">3x</output>
+        </div>
+        <input id="speedRange" type="range" min="0.25" max="5" step="0.25" value="3">
+        <div class="presets" aria-label="Speed presets">
+          <button type="button" data-speed="1">1x</button>
+          <button type="button" data-speed="2">2x</button>
+          <button type="button" data-speed="3">3x</button>
+          <button type="button" data-speed="4">4x</button>
+        </div>
+      </section>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>
