@@ -183,12 +183,11 @@ function handleHoldKeyDown(event) {
 function handleHoldKeyUp(event) {
   if (event.key !== HOLD_KEY) return;
 
-  if (holdState.active) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
   resetHoldSpeed();
+
+  if (currentSettings.enabled) {
+    window.setTimeout(enforceAllVideos, 0);
+  }
 }
 
 function installHoldShortcut() {
