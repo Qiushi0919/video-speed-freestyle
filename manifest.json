@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Video 3x Speed",
+  "version": "1.0.0",
+  "description": "Automatically plays HTML5 videos at 3x speed.",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ]
+}
